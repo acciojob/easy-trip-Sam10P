@@ -79,7 +79,6 @@ public class AirportRepository {
 
     public String bookATicket(Integer flightId, Integer passengerId){
         Flight flight = flightDb.get(flightId);
-        Passenger passenger = passengerDb.get(passengerId);
 
        if(flightPassengerDb.containsKey(flightId)){
             if(flightPassengerDb.get(flightId).size() >= flight.getMaxCapacity()){
@@ -151,21 +150,30 @@ public class AirportRepository {
 
     public int getNumberOfPeopleOn(Date date, String airportName){
         int noOfPeople = 0;
-        City city = airportDb.get(airportName).getCity();
+        Airport airport = airportDb.get(airportName);
+        if(airport!=null){
+            City city = airportDb.get(airportName).getCity();
 
-        for(int flightId : flightDb.keySet()){
-            Flight flight = flightDb.get(flightId);
-            if((flight.getFromCity() == city || flight.getToCity() == city) && flight.getFlightDate() == date){
-                noOfPeople = noOfPeople + flightPassengerDb.get(flightId).size();
+            for(int flightId : flightDb.keySet()){
+                Flight flight = flightDb.get(flightId);
+                if((flight.getFromCity() == city || flight.getToCity() == city) && flight.getFlightDate() == date){
+                    noOfPeople = noOfPeople + flightPassengerDb.get(flightId).size();
+                }
+
             }
         }
         return noOfPeople;
     }
 
     public int calculateFlightFare(int flightId){
-        int passengerCount = flightPassengerDb.get(flightId).size();
-        int price = 3000 + (passengerCount*50);
-        return price;
+        int fare=3000;
+        int alreadyBooked=0;
+        if(flightPassengerDb.containsKey(flightId))
+            alreadyBooked=flightPassengerDb.get(flightId).size();
+        return (fare+(alreadyBooked*50));
+//        int passengerCount = flightPassengerDb.get(flightId).size();
+//        int price = 3000 + (passengerCount*50);
+//        return price;
         //Calculation of flight prices is a function of number of people who have booked the flight already.
         //Price for any flight will be : 3000 + noOfPeopleWhoHaveAlreadyBooked*50
         //Suppose if 2 people have booked the flight already : the price of flight for the third person will be 3000 + 2*50 = 3100
@@ -173,11 +181,14 @@ public class AirportRepository {
     }
 
     public int calculateRevenueOfAFlight(int flightId){
-        int revenue = flightCollection.get(flightId);
+        int revenue = flightCollection.getOrDefault(flightId,0);
         return revenue;
     }
 
     public String getAirportNameFromFlightId(int flightId){
+        if(!flightDb.containsKey(flightId)){
+            return null;
+        }
         Flight flight = flightDb.get(flightId);
         City city = flight.getFromCity();
         for(String airportName : airportDb.keySet()){
