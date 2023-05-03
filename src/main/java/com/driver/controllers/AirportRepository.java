@@ -7,15 +7,12 @@ import com.driver.model.Flight;
 import com.driver.model.Passenger;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 public class AirportRepository {
 
-    HashMap<String, Airport> airportDb = new HashMap<>();
+    TreeMap<String, Airport> airportDb = new TreeMap<>();
     HashMap<Integer, Flight> flightDb = new HashMap<>();
     HashMap<Integer, Passenger> passengerDb = new HashMap<>();
     HashMap<Integer, Set<Integer>> flightPassengerDb = new HashMap<>();
@@ -41,19 +38,29 @@ public class AirportRepository {
     public String getLargestAirportName(){
 
         int noOfTerminals = 0;
-        Airport largestAirport = null;
-        for(String airportName : airportDb.keySet()){
-            Airport airport = airportDb.get(airportName);
-            if(airport.getNoOfTerminals() > noOfTerminals){
-                largestAirport = airport;
-            }
-            else if(airport.getNoOfTerminals() == noOfTerminals){
-                if(airport.getAirportName().compareTo(largestAirport.getAirportName()) < 0){
-                    largestAirport = airport;
-                }
+//        Airport largestAirport = null;
+//        for(String airportName : airportDb.keySet()){
+//            Airport airport = airportDb.get(airportName);
+//            if(airport.getNoOfTerminals() > noOfTerminals){
+//                largestAirport = airport;
+//            }
+//            else if(airport.getNoOfTerminals() == noOfTerminals){
+//                if(airport.getAirportName().compareTo(largestAirport.getAirportName()) < 0){
+//                    largestAirport = airport;
+//                }
+//            }
+//        }
+//        return largestAirport.getAirportName();
+        String answer="";
+        int ans=0;
+        for(String name:airportDb.keySet()){
+            int co=airportDb.get(name).getNoOfTerminals();
+            if(co>ans){
+                ans=co;
+                answer=name;
             }
         }
-        return largestAirport.getAirportName();
+        return answer;
     }
 
     public double getShortestDurationOfPossibleBetweenTwoCities(City fromCity, City toCity){
