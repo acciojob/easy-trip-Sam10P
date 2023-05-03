@@ -63,7 +63,7 @@ public class AirportRepository {
 
         for(int flightId : flightDb.keySet()){
             Flight flight = flightDb.get(flightId);
-            if(flight.getFromCity() == fromCity && flight.getToCity() == toCity){
+            if(flight.getFromCity().equals(fromCity) && flight.getToCity().equals(toCity)){
                 foundFlight = true;
                 if(flight.getDuration() < shortestDuration){
                     shortestDuration = flight.getDuration();
@@ -71,7 +71,7 @@ public class AirportRepository {
             }
         }
 
-        if(foundFlight = false){
+        if(foundFlight == false){
             return -1;
         }
         return shortestDuration;
@@ -152,12 +152,16 @@ public class AirportRepository {
         int noOfPeople = 0;
         Airport airport = airportDb.get(airportName);
         if(airport!=null){
-            City city = airportDb.get(airportName).getCity();
+            City city = airport.getCity();
 
             for(int flightId : flightDb.keySet()){
                 Flight flight = flightDb.get(flightId);
-                if((flight.getFromCity() == city || flight.getToCity() == city) && flight.getFlightDate() == date){
-                    noOfPeople = noOfPeople + flightPassengerDb.get(flightId).size();
+                if((flight.getFromCity().equals(city) || flight.getToCity().equals(city)) && flight.getFlightDate().equals(date)){
+//                    noOfPeople = noOfPeople + flightPassengerDb.get(flightId).size();
+                    Set<Integer> set = flightPassengerDb.get(flightId);
+                    if (set != null) {
+                        noOfPeople += set.size();
+                    }
                 }
 
             }
